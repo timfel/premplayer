@@ -21,6 +21,7 @@
 
 pid_t mplayer_pid;
 char mplayer_path[1024] = {'\0'}; // Be nasty - pre-allocate enough space for a path
+char* entries = NULL;
 
 PDL_bool prem_list(PDL_JSParameters *parms, unsigned char type) {
 	int argc = PDL_GetNumJSParams(parms);
@@ -36,7 +37,11 @@ PDL_bool prem_list(PDL_JSParameters *parms, unsigned char type) {
 	if (dir) {
 		int entry_p = 0; // The position we're at in the return buffer
 		int entry_size = MIN_DIR_ENTRY_LENGTH; // The current size of the return buffer
-		char* entries = (char*)calloc(sizeof(char), entry_size + 1);
+		if (entries) {
+			// There are to be entries from a previous run, free those
+			free(entries);
+		}
+		entries = (char*)calloc(sizeof(char), entry_size + 1);
 		if (!entries) return EMPTY_STRING(parms);
 
 		struct dirent *ent;
@@ -126,6 +131,12 @@ PDL_bool prem_run(PDL_JSParameters *parms) {
 
 	if (mplayer_pid) {
 		// parent
+		for (int i = 0; i < argc; i++) {
+			if (argv[i]) {
+				free(argv[i]);
+			}
+			free(argv);
+		}
 		return RETVAL_TRUE(parms);
 	} else {
 		// child
