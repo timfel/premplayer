@@ -1,1 +1,11 @@
 /* TODO: put your application-specific CSS here */
+
+.palm-row.single .file {
+  text-indent: 48px;
+  background: url('../images/file.png') no-repeat left center;
+}
+
+.palm-row.single .folder {
+  text-indent: 48px;
+  background: url('../images/folder.png') no-repeat left center;
+}

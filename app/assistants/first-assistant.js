@@ -6,18 +6,26 @@ function FirstAssistant() {
 }
 
 FirstAssistant.prototype.filterFunction = function(filterString, listWidget, offset, count) {
+
 };
 
-FirstAssistant.prototype.fillFileList = function() {
-	var split_and_convert = function(str) {
+FirstAssistant.prototype.fillFileList = function(event_or_path, path) {
+	if (path === undefined || path === null) {
+		if (event_or_path + "" === event_or_path) {
+			path = event_or_path;
+		} else {
+			path = "/media/internal";
+		}
+	}
+	var split_and_convert = function(str, img) {
 		return str.split("/").collect(function(el) {
-			return {data: el};
+			return {data: el, icon: img};
 		});
 	};
 
-	var files = split_and_convert($('premplayer_plugin').list_files("/media/internal"));
+	var files = split_and_convert($('premplayer_plugin').list_files(path), "file");
 	$('fileListId').mojo.noticeAddedItems(0, files);
-	var directories = split_and_convert($('premplayer_plugin').list_directories("/media/internal"));
+	var directories = split_and_convert($('premplayer_plugin').list_directories(path), "folder");
 	$('fileListId').mojo.noticeAddedItems(0, directories);
 };
 
