@@ -49,8 +49,8 @@ writeObj = function(obj, message) {
 };
 
 FirstAssistant.prototype.handleListTap = function(event) {
+	var current_path = $('fileListTitleId').innerHTML;
 	if (event.item.icon === "folder") {
-		var current_path = $('fileListTitleId').innerHTML;
 		if (event.item.data === ".") {
 			// Just refresh
 		} else if (event.item.data === "..") {
@@ -62,6 +62,7 @@ FirstAssistant.prototype.handleListTap = function(event) {
 		this.fillFileList(current_path);
 	} else if (event.item.icon === "file") {
 		writeObj(event.item, "TODO: Add this to list");
+		$("premplayer_plugin").run(current_path + "/" + event.item.data);
 	}
 };
 
