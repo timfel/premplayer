@@ -18,7 +18,7 @@ FirstAssistant.prototype.setup = function() {
   this.controller.get("app-version").update(Mojo.appInfo.version);
 
 	plugin_call = function() {
-		this.update($('premplayer_plugin').list_directories + "");
+		this.update($('premplayer_plugin').list_directories("/media/internal"));
 		$('premplayer_plugin').kill();
 		$('premplayer_plugin').run("/media/internal/film/git1.avi");
 		$('premplayer_plugin').list_directories("/media/internal");
