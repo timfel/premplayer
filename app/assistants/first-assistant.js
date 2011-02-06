@@ -15,8 +15,16 @@ FirstAssistant.prototype.setup = function() {
 	/* update the app info using values from our app */
 	this.controller.get("app-title").update(Mojo.appInfo.title);
 	this.controller.get("app-id").update(Mojo.appInfo.id);
-	this.controller.get("app-version").update(Mojo.appInfo.version);
+  this.controller.get("app-version").update(Mojo.appInfo.version);
 
+	plugin_call = function() {
+		this.update($('premplayer_plugin').list_directories + "");
+		$('premplayer_plugin').kill();
+		$('premplayer_plugin').run("/media/internal/film/git1.avi");
+		$('premplayer_plugin').list_directories("/media/internal");
+		$('premplayer_plugin').list_files();
+	};
+	Mojo.Event.listen(this.controller.get("buttonId"), Mojo.Event.tap, plugin_call);
 	/* add event handlers to listen to events from widgets */
 };
 
