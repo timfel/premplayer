@@ -13,8 +13,6 @@
 #define RETVAL_FALSE(x) PDL_JSReply(x, "false"); return PDL_TRUE;
 #define MAX(x,y) (x > y ? x : y)
 
-// The maximum number of parameters we will allow to be passed to mplayer
-#define MAX_PARAMETERS 42
 // The starting size for the directory entries vector
 #define MIN_DIR_ENTRY_LENGTH 2048
 
@@ -127,30 +125,11 @@ PDL_bool prem_run(PDL_JSParameters *parms) {
 	if (argc < 1) {
 		return RETVAL_FALSE(parms);
 	}
-	if (argc > MAX_PARAMETERS) {
-		argc = MAX_PARAMETERS;
-	}
 
-	DEBUG_LOG("Got arguments\n");
-	char** argv = (char**)calloc(sizeof(char*), argc);
-	if (argv == NULL) {
-		return RETVAL_FALSE(parms); // Unable to allocate argument list
-	}
-	DEBUG_LOG("allocated arguments\n");
-
-	for (int i = 0; i < argc; i++) {
-		const char* argument = PDL_GetJSParamString(parms, i);
-		DEBUG_LOG("allocate argument\n");
-		argv[i] = (char*)calloc(sizeof(char), strlen(argument));
-		if (argv[i] == NULL) {
-			DEBUG_LOG("cannot allocate!!!\n");
-			break; // If we cannot allocate anymore, ignore the remaining args
-		}
-		strcpy(argv[i], argument);
-		DEBUG_LOG("Argument for run: ");
-		DEBUG_LOG(argument);
-		DEBUG_LOG("\n");
-	}
+	const char* argument = PDL_GetJSParamString(parms, 0);
+	DEBUG_LOG("Argument for run: ");
+	DEBUG_LOG(argument);
+	DEBUG_LOG("\n");
 
 	mplayer_pid = fork();
 	if (mplayer_pid == -1) {
@@ -158,22 +137,14 @@ PDL_bool prem_run(PDL_JSParameters *parms) {
 		mplayer_pid = 0;
 		return RETVAL_FALSE(parms);
 	}
-
 	if (mplayer_pid) {
 		// parent
-		DEBUG_LOG("Parent: Freeing\n");
-		for (int i = 0; i < argc; i++) {
-			if (argv[i]) {
-				free(argv[i]);
-			}
-			free(argv);
-		}
-		DEBUG_LOG("Parent: Free'd\n");
 		return RETVAL_TRUE(parms);
 	} else {
 		// child
-		execv(mplayer_path, argv);
+		execl(mplayer_path, argument);
 	}
+	return RETVAL_TRUE(parms);
 }
 
 void termination_handler(int signum) {
@@ -216,7 +187,6 @@ int main(int argc, char** argv) {
 	if (reg == PDL_NOERROR) {
 		DEBUG_LOG("Registration complete\n");
 	}
-
 
 	SDL_Event event;
 	do {
