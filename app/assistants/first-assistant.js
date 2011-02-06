@@ -5,26 +5,49 @@ function FirstAssistant() {
 	   that needs the scene controller should be done in the setup function below. */
 }
 
+FirstAssistant.prototype.filterFunction = function(filterString, listWidget, offset, count) {
+};
+
+FirstAssistant.prototype.fillFileList = function() {
+	var split_and_convert = function(str) {
+		return str.split("/").collect(function(el) {
+			return {data: el};
+		});
+	};
+
+	var files = split_and_convert($('premplayer_plugin').list_files("/media/internal"));
+	$('fileListId').mojo.noticeAddedItems(0, files);
+	var directories = split_and_convert($('premplayer_plugin').list_directories("/media/internal"));
+	$('fileListId').mojo.noticeAddedItems(0, directories);
+};
+
 FirstAssistant.prototype.setup = function() {
 	/* this function is for setup tasks that have to happen when the scene is first created */
 
 	/* use Mojo.View.render to render view templates and add them to the scene, if needed */
 
 	/* setup widgets here */
+	this.controller.setupWidget("fileListId",
+		this.attributes = {
+			itemTemplate: "first/static-file-list-entry",
+			listTemplate: "first/static-file-list-container",
+			swipeToDelete: false,
+			reorderable: false,
+			filterFunction: this.filterFunction.bind(this),
+			emptyTemplate:"filterlist/emptylist"
+		},
+		this.model = {
+			listTitle: "/media/internal",
+			disabled: false
+		}
+	);
 
 	/* update the app info using values from our app */
 	this.controller.get("app-title").update(Mojo.appInfo.title);
 	this.controller.get("app-id").update(Mojo.appInfo.id);
   this.controller.get("app-version").update(Mojo.appInfo.version);
 
-	plugin_call = function() {
-		this.update($('premplayer_plugin').list_directories("/media/internal"));
-		$('premplayer_plugin').kill();
-		$('premplayer_plugin').run("/media/internal/film/git1.avi");
-		$('premplayer_plugin').list_directories("/media/internal");
-		$('premplayer_plugin').list_files();
-	};
-	Mojo.Event.listen(this.controller.get("buttonId"), Mojo.Event.tap, plugin_call);
+	Mojo.Event.listen(this.controller.get("buttonId"), Mojo.Event.tap, this.fillFileList);
 	/* add event handlers to listen to events from widgets */
 };
 
