@@ -1,9 +1,10 @@
 {
-	"id": "com.yourdomain.premplayer",
-	"version": "1.0.0",
-	"vendor": "My Company",
-	"type": "web",
-	"main": "index.html",
-	"title": "PreMPlayer",
-	"icon": "icon.png"
+  "id": "com.yourdomain.premplayer",
+  "version": "1.0.0",
+  "vendor": "My Company",
+  "type": "web",
+  "main": "index.html",
+  "title": "PreMPlayer",
+  "icon": "icon.png",
+  "plug-ins": true
 }
